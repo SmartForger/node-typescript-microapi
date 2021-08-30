@@ -1,0 +1,7 @@
+FROM node:carbon
+
+WORKDIR /org-lookup-orchestrator
+
+COPY . /org-lookup-orchestrator
+
+EXPOSE 8080

@@ -1,0 +1,24 @@
+{
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "tslint-config-standard"
+  ],
+  "jsRules": {},
+  "rules": {
+    "file-name-casing": [true, "camel-case"],
+    "prettier/prettier": ["error"],
+    "semicolon": [true, "always"],
+    "await-promise": false,
+    "trailing-comma": [true],
+    "no-var-requires" : false,
+    "no-console": true,
+    "max-line-length": [true, 120]
+  },
+  "rulesDirectory": []
+}
