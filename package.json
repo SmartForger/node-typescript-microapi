@@ -11,9 +11,10 @@
     "start-dev": "nodemon --watch src -e ts --exec yarn run dev:start",
     "start": "node dist",
     "test": "./node_modules/.bin/jest -w 2 --coverage",
-    "test:ci": "npm run test --verbose --coverage --runInBand --ci",
+    "test:ci": "npm run tesht --verbose --coverage --runInBand --ci",
     "dev": "nodemon src/index.ts",
-    "release": "standard-version && git push --follow-tags origin master"
+    "release": "standard-version && git push --follow-tags origin master",
+    "prepare": "husky install"
   },
   "jest": {
     "coverageThreshold": {
