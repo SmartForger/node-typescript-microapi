@@ -1,7 +1,5 @@
-
 import express from 'express';
 import { Environments } from './config/environments';
-
 
 const app = express();
 
