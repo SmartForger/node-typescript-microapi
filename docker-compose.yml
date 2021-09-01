@@ -1,16 +1,14 @@
 version: '3'
 
 services:
-  org-lookup-orchestrator:
+  api:
     build:
       context: .
       dockerfile: Dockerfile.dev
     ports:
       - 8080:8080
-    environment:
-      
-    entrypoint: sh -ce "./check_node_modules.sh && npm run build && npm run start"
+    entrypoint: sh -ce "./check_node_modules.sh && npm run start-dev"
     volumes:
-      - .:/org-lookup-orchestrator
+      - .:/project
     tty: true
 

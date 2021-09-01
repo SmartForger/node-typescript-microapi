@@ -1,7 +1,10 @@
-FROM node:carbon
+FROM node:14
 
-WORKDIR /org-lookup-orchestrator
+WORKDIR /project
 
-COPY . /org-lookup-orchestrator
+COPY package.json /project
+COPY package-lock.json /project
+
+RUN npm install
 
 EXPOSE 8080
