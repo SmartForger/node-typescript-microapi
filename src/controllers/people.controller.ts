@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
-import { unionBy, reduce } from 'lodash';
-import { Organization } from '../models/Organization';
 import { RestController } from '../common/RestController';
-import api from '../common/api';
-import { APIResponse } from '../common/api/dto';
+import { api } from '../common/api';
 
 export class PeopleController extends RestController {
   constructor() {
@@ -17,18 +14,12 @@ export class PeopleController extends RestController {
     const kwuid = parseInt(req.params.kwuid, 10) || 0;
 
     try {
-      const { data: person } = await api.getPerson(kwuid);
-      const { data: organizations } = await api.getOrganizationsForPerson(kwuid);
-      const responses = await Promise.all(organizations.map((org) => api.getOrganizationAncestors(org.id)));
-      const orgAncestors = reduce(
-        responses,
-        (prev: Organization[], cur: APIResponse<Organization[]>) => [...prev, ...cur.data],
-        [],
-      );
+      const person = await api.getPerson(kwuid);
+      const organizations = await api.getOrganizationsForPerson(kwuid);
 
       this.sendData(res, {
         person,
-        organizations: unionBy(organizations, orgAncestors, (org: Organization) => org.id),
+        organizations,
       });
     } catch (err) {
       console.log(err);

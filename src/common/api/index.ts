@@ -1,5 +1,3 @@
-import { MockAPIService } from './MockAPIService';
+import { APIService } from './APIService';
 
-const api = new MockAPIService();
-
-export default api;
+export const api = new APIService();

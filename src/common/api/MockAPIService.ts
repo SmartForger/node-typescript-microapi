@@ -2,9 +2,9 @@ import { Organization } from '../../models/Organization';
 import { Person } from '../../models/Person';
 import { delay } from '../../utils';
 import { APIResponse } from './dto';
-import { IAPIService } from './IAPIService';
+import { IRestAPIService } from './IRestAPIService';
 
-export class MockAPIService implements IAPIService {
+export class MockAPIService implements IRestAPIService {
   public async getOrganizationAncestors(orgId: number): Promise<APIResponse<Organization[]>> {
     await delay(getRandomDelay());
 
@@ -23,6 +23,7 @@ export class MockAPIService implements IAPIService {
       data: ancestors,
     };
   }
+
   public async getPerson(kwuid: number): Promise<APIResponse<Person>> {
     await delay(getRandomDelay());
 
@@ -36,6 +37,17 @@ export class MockAPIService implements IAPIService {
       data: people[kwuid],
     };
   }
+
+  public async getOrganization(orgId: number): Promise<APIResponse<Organization>> {
+    await delay(getRandomDelay());
+
+    const { orgParents } = mockData();
+
+    return {
+      data: getOrganizationFromID(orgId, orgParents[orgId]),
+    };
+  }
+
   public async getOrganizationsForPerson(kwuid: number): Promise<APIResponse<Organization[]>> {
     await delay(getRandomDelay());
     const { orgIdsByKwuid, orgParents } = mockData();

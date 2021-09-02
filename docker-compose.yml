@@ -8,7 +8,10 @@ services:
     ports:
       - 8080:8080
     entrypoint: sh -ce "./check_node_modules.sh && npm run start-dev"
+    environment:
+      REDIS_HOST: redis
     volumes:
       - .:/project
     tty: true
-
+  redis:
+    image: 'redis:alpine'
