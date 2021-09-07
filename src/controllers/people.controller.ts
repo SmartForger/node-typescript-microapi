@@ -8,6 +8,7 @@ export class PeopleController extends RestController {
 
     // Configure routes here
     this.routes.get('/:kwuid', this.getPerson.bind(this));
+    this.routes.get('/:kwuid/orgs', this.getOrganizations.bind(this));
   }
 
   public async getPerson(req: Request, res: Response): Promise<void> {
@@ -16,11 +17,26 @@ export class PeopleController extends RestController {
 
     try {
       const person = await api.getPerson(kwuid, token);
+
+      this.sendData(res, {
+        data: person,
+      });
+    } catch (err) {
+      console.log(err);
+      // TODO: Better error handling
+      res.status(500).send('Server error');
+    }
+  }
+
+  public async getOrganizations(req: Request, res: Response): Promise<void> {
+    const kwuid = parseInt(req.params.kwuid, 10) || 0;
+    const token = req.headers?.authorization || '';
+
+    try {
       const organizations = await api.getOrganizationsForPerson(kwuid, token);
 
       this.sendData(res, {
-        person,
-        organizations,
+        data: organizations,
       });
     } catch (err) {
       console.log(err);
