@@ -7,9 +7,10 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 8080:8080
-    entrypoint: sh -ce "./check_node_modules.sh && npm run start-dev"
+    entrypoint: sh -ce "./check_node_modules.sh && npm run dev:watch"
     environment:
       REDIS_HOST: redis
+      PNO_SERVICE_URL: https://kong.command-api.kw.com/pno/api/v2
     volumes:
       - .:/project
     tty: true

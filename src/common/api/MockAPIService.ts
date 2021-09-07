@@ -67,7 +67,7 @@ export class MockAPIService implements IRestAPIService {
 function mockData() {
   const people: Record<number, Person> = {
     1: {
-      id: 1,
+      kw_uid: 1,
       username: `user1`,
       first_name: `Neil`,
       last_name: 'Allan',
@@ -76,7 +76,7 @@ function mockData() {
       default_org_id: 1,
     },
     2: {
-      id: 2,
+      kw_uid: 2,
       username: `user2`,
       first_name: `Colin`,
       last_name: 'Edmunds',
@@ -85,7 +85,7 @@ function mockData() {
       default_org_id: 2,
     },
     3: {
-      id: 3,
+      kw_uid: 3,
       username: `user3`,
       first_name: `Sonia`,
       last_name: 'Wilkins',
@@ -94,7 +94,7 @@ function mockData() {
       default_org_id: 2,
     },
     4: {
-      id: 4,
+      kw_uid: 4,
       username: `user4`,
       first_name: `Carol`,
       last_name: 'James',

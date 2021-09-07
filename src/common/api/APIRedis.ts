@@ -13,7 +13,7 @@ export class APIRedis {
   }
 
   public setPerson(person: Person): Promise<'OK'> {
-    return getRedis().set(`people:${person.id}`, JSON.stringify(person));
+    return getRedis().set(`people:${person.kw_uid}`, JSON.stringify(person));
   }
 
   public async getOrgIds(kwuid: number): Promise<number[]> {

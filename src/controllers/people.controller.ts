@@ -12,10 +12,11 @@ export class PeopleController extends RestController {
 
   public async getPerson(req: Request, res: Response): Promise<void> {
     const kwuid = parseInt(req.params.kwuid, 10) || 0;
+    const token = req.headers?.authorization || '';
 
     try {
-      const person = await api.getPerson(kwuid);
-      const organizations = await api.getOrganizationsForPerson(kwuid);
+      const person = await api.getPerson(kwuid, token);
+      const organizations = await api.getOrganizationsForPerson(kwuid, token);
 
       this.sendData(res, {
         person,

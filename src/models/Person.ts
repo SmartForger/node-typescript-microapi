@@ -1,5 +1,5 @@
 export interface Person {
-  id: number;
+  kw_uid: number;
   username: string;
   first_name: string;
   last_name: string;

@@ -1,19 +1,48 @@
+import axios from 'axios';
+import { Environments } from '../../config/environments';
 import { Organization } from '../../models/Organization';
 import { Person } from '../../models/Person';
 import { APIResponse } from './dto';
 import { IRestAPIService } from './IRestAPIService';
 
 export class RestAPIService implements IRestAPIService {
-  getOrganization(orgId: any): Promise<APIResponse<Organization>> {
-    throw new Error('Method not implemented.');
+  public async getOrganization(orgId: number, token: string): Promise<APIResponse<Organization>> {
+    const { data } = await axios.get(`${Environments.pnoServiceUrl}/orgs/${orgId}`, {
+      headers: {
+        authorization: token,
+      },
+    });
+
+    return data;
   }
-  getOrganizationAncestors(orgId: number): Promise<APIResponse<Organization[]>> {
-    throw new Error('Method not implemented.');
+  public async getOrganizationAncestors(orgId: number, token: string): Promise<APIResponse<Organization[]>> {
+    try {
+      const { data } = await axios.get(`${Environments.pnoServiceUrl}/orgs/${orgId}/ancestors`, {
+        headers: {
+          authorization: token,
+        },
+      });
+
+      return data;
+    } catch (e) {
+      return { data: [] };
+    }
   }
-  getPerson(kwuid: number): Promise<APIResponse<Person>> {
-    throw new Error('Method not implemented.');
+  public async getPerson(kwuid: number, token: string): Promise<APIResponse<Person>> {
+    const { data } = await axios.get(`${Environments.pnoServiceUrl}/people/${kwuid}`, {
+      headers: {
+        authorization: token,
+      },
+    });
+    return data;
   }
-  getOrganizationsForPerson(kwuid: number): Promise<APIResponse<Organization[]>> {
-    throw new Error('Method not implemented.');
+  public async getOrganizationsForPerson(kwuid: number, token: string): Promise<APIResponse<Organization[]>> {
+    const { data } = await axios.get(`${Environments.pnoServiceUrl}/people/${kwuid}/orgs`, {
+      headers: {
+        authorization: token,
+      },
+    });
+
+    return data;
   }
 }
