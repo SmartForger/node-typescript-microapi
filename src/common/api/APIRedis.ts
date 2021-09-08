@@ -1,3 +1,4 @@
+import { Environments } from '../../config/environments';
 import { Organization } from '../../models/Organization';
 import { Person } from '../../models/Person';
 import { getRedis } from '../redis';
@@ -26,7 +27,7 @@ export class APIRedis {
   }
 
   public setOrgIds(kwuid: number, orgIds: number[]): Promise<'OK'> {
-    return getRedis().set(`people:${kwuid}:orgIds`, orgIds.join(','));
+    return getRedis().set(`people:${kwuid}:orgIds`, orgIds.join(','), 'EX', Environments.redisExpireTime);
   }
 
   public async getOrganzations(orgIds: number[]): Promise<Organization[]> {
@@ -45,6 +46,6 @@ export class APIRedis {
       return 'OK';
     }
 
-    return redis.set(`org:${org.id}`, JSON.stringify(org));
+    return redis.set(`org:${org.id}`, JSON.stringify(org), 'EX', Environments.redisExpireTime);
   }
 }
