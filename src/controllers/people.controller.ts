@@ -7,25 +7,8 @@ export class PeopleController extends RestController {
     super();
 
     // Configure routes here
-    this.routes.get('/:kwuid', this.getPerson.bind(this));
     this.routes.get('/:kwuid/orgs', this.getOrganizations.bind(this));
-  }
-
-  public async getPerson(req: Request, res: Response): Promise<void> {
-    const kwuid = parseInt(req.params.kwuid, 10) || 0;
-    const token = req.headers?.authorization || '';
-
-    try {
-      const person = await api.getPerson(kwuid, token);
-
-      this.sendData(res, {
-        data: person,
-      });
-    } catch (err) {
-      console.log(err);
-      // TODO: Better error handling
-      res.status(500).send('Server error');
-    }
+    this.routes.get('/:kwuid/orgs/reload', this.getFreshOrganizations.bind(this));
   }
 
   public async getOrganizations(req: Request, res: Response): Promise<void> {
@@ -34,6 +17,23 @@ export class PeopleController extends RestController {
 
     try {
       const organizations = await api.getOrganizationsForPerson(kwuid, token);
+
+      this.sendData(res, {
+        data: organizations,
+      });
+    } catch (err) {
+      console.log(err);
+      // TODO: Better error handling
+      res.status(500).send('Server error');
+    }
+  }
+
+  public async getFreshOrganizations(req: Request, res: Response): Promise<void> {
+    const kwuid = parseInt(req.params.kwuid, 10) || 0;
+    const token = req.headers?.authorization || '';
+
+    try {
+      const organizations = await api.getOrganizationsForPerson(kwuid, token, true);
 
       this.sendData(res, {
         data: organizations,

@@ -30,9 +30,9 @@ export class APIService {
     return data;
   }
 
-  public async getOrganizationsForPerson(kwuid: number, token: string): Promise<Organization[]> {
+  public async getOrganizationsForPerson(kwuid: number, token: string, force?: boolean): Promise<Organization[]> {
     const cachedOrgIds = await this.redis.getOrgIds(kwuid);
-    if (cachedOrgIds.length > 0) {
+    if (!force && cachedOrgIds.length > 0) {
       const cachedOrganizations = await this.redis.getOrganzations(cachedOrgIds);
       return cachedOrganizations;
     }
