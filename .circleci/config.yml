@@ -1,0 +1,104 @@
+version: 2.1
+orbs:
+  coveralls: coveralls/coveralls@1.0.6
+jobs:
+  merge_pr:
+    docker:
+      - image: gcr.io/kw-image-repo/ci-deploy-gcp:gcr-v2
+        auth:
+          username: $GCR_PULL_LOGIN
+          password: $GCR_PULL_SERVICE_KEY
+        environment:
+          MICROSERVICES_NAME: connect-org-lookup-orchestrator
+
+    steps:
+      - setup_remote_docker
+
+      - checkout
+      - run:
+          name: Check status of PR and Merge
+          command: |
+            /scripts/spinnaker/merge-pr-v2.sh --skip-squash
+      - run:
+          name: Update Docker Tags
+          command: |
+            /scripts/spinnaker/image-tag-v2.sh
+  build_image:
+    working_directory: /app
+    docker:
+      - image: gcr.io/kw-image-repo/ci-build-js:14.17.3
+        auth:
+          username: $GCR_PULL_LOGIN
+          password: $GCR_PULL_SERVICE_KEY
+        environment:
+          MICROSERVICES_NAME: connect-org-lookup-orchestrator
+
+    steps:
+      - setup_remote_docker
+
+      - checkout
+
+      - run:
+          name: Setup Environment Variables
+          command: |
+            /scripts/spinnaker/vars-set.sh
+      - run:
+          name: Print variables
+          command: |
+            /scripts/spinnaker/vars-print.sh
+      - run:
+          name: Provide GitHub private key
+          command: |
+            /scripts/spinnaker/set-github-private-key.sh
+      - run:
+          name: Build Docker Image
+          command: |
+            /scripts/spinnaker/docker-build.sh --build-arg VERSION=${VERSION}
+      - run:
+          name: Run Unit Tests
+          command: |
+            yarn install
+            yarn test:ci
+
+      - store_test_results:
+          path: coverage
+      - store_artifacts:
+          path: coverage
+
+      - coveralls/upload
+
+      - run:
+          name: Push Docker Images
+          command: |
+            /scripts/spinnaker/docker-push.sh
+workflows:
+  version: 2
+  build_push:
+    jobs:
+      - build_image:
+          context: nonprod_push_and_deploy
+          filters:
+            branches:
+              only:
+                - /^feature\/\S*$/
+                - /^hotfix\/\S*$/
+                - /^bugfix\/\S*$/
+                - /^chore\/\S*$/
+                - /^dependabot\/\S*$/
+                - main
+      - pr_approved:
+          type: approval
+          requires:
+            - build_image
+      - merge_pr:
+          context: nonprod_push_and_deploy
+          requires:
+            - pr_approved
+          filters:
+            branches:
+              only:
+                - /^feature\/\S*$/
+                - /^hotfix\/\S*$/
+                - /^bugfix\/\S*$/
+                - /^chore\/\S*$/
+                - /^dependabot\/\S*$/
