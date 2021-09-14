@@ -5,7 +5,7 @@ let redis: IORedis.Redis;
 
 export function getRedis(): IORedis.Redis {
   if (!redis) {
-    redis = new IORedis(Environments.redisPort, Environments.redisHost);
+    redis = new IORedis(Environments.redisUrl);
   }
 
   return redis;

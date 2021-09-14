@@ -1,0 +1,58 @@
+appRole: http
+
+configEnv: dev
+
+configMap:
+  NODE_ENV: "development"
+  BUILD_ENV: "development"
+  SERVER_PORT: "8080"
+  REDIS_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#REDIS_HOST
+  PNO_SERVICE_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#PNO_SERVICE_URL
+  REDIS_EXPIRE_TIME: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#REDIS_EXPIRE_TIME
+
+customLabels: {}
+
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+  # Additional service ports config
+  extraPorts:
+
+hpa:
+
+replicaCount: 3
+
+vault:
+ addr: "https://vault.cloud.kw.com/"
+ tls: "vault-tls"
+ role: "read"
+
+imagePullSecretsAuth: gcr-access-key
+
+container:
+  name: connect-groups-api
+  image:
+    repository: gcr.io/kw-image-repo/connect-groups-api
+    pullPolicy: Always
+  command:
+  ports:
+    - name: http
+      containerPort: 8080
+  resources:
+    requests:
+      cpu: "25m"
+  livenessProbe:
+    initialDelaySeconds: 3
+    periodSeconds: 30
+    timeoutSeconds: 5
+    httpGet:
+      path: /health
+      port: 8080
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    httpGet:
+      path: /health
+      port: 8080
