@@ -1,13 +1,10 @@
-import { Organization } from '../../models/Organization';
-import { Person } from '../../models/Person';
-import { delay } from '../../utils';
-import { APIResponse } from './dto';
-import { IRestAPIService } from './IRestAPIService';
+import { Organization } from '../../../models/Organization';
+import { delay } from '../../../utils';
+import { APIResponse } from '../../../common/api/dto';
+import { IRestAPIService } from '../../../common/api/IRestAPIService';
 
-export class MockAPIService implements IRestAPIService {
+class MockAPIService implements IRestAPIService {
   public async getOrganizationAncestors(orgId: number): Promise<APIResponse<Organization[]>> {
-    await delay(getRandomDelay());
-
     const { orgParents } = mockData();
 
     const ancestorIDs: number[] = [];
@@ -24,20 +21,6 @@ export class MockAPIService implements IRestAPIService {
     };
   }
 
-  public async getPerson(kwuid: number): Promise<APIResponse<Person>> {
-    await delay(getRandomDelay());
-
-    const { people } = mockData();
-
-    if (!people[kwuid]) {
-      throw new Error('not found');
-    }
-
-    return {
-      data: people[kwuid],
-    };
-  }
-
   public async getOrganization(orgId: number): Promise<APIResponse<Organization>> {
     await delay(getRandomDelay());
 
@@ -49,7 +32,6 @@ export class MockAPIService implements IRestAPIService {
   }
 
   public async getOrganizationsForPerson(kwuid: number): Promise<APIResponse<Organization[]>> {
-    await delay(getRandomDelay());
     const { orgIdsByKwuid, orgParents } = mockData();
 
     if (!orgIdsByKwuid[kwuid]) {
@@ -65,45 +47,6 @@ export class MockAPIService implements IRestAPIService {
 }
 
 function mockData() {
-  const people: Record<number, Person> = {
-    1: {
-      kw_uid: 1,
-      username: `user1`,
-      first_name: `Neil`,
-      last_name: 'Allan',
-      email: null,
-      phone: null,
-      default_org_id: 1,
-    },
-    2: {
-      kw_uid: 2,
-      username: `user2`,
-      first_name: `Colin`,
-      last_name: 'Edmunds',
-      email: null,
-      phone: null,
-      default_org_id: 2,
-    },
-    3: {
-      kw_uid: 3,
-      username: `user3`,
-      first_name: `Sonia`,
-      last_name: 'Wilkins',
-      email: null,
-      phone: null,
-      default_org_id: 2,
-    },
-    4: {
-      kw_uid: 4,
-      username: `user4`,
-      first_name: `Carol`,
-      last_name: 'James',
-      email: null,
-      phone: null,
-      default_org_id: 2,
-    },
-  };
-
   const orgIdsByKwuid: Record<number, number[]> = {
     1: [5, 8],
     2: [16, 17],
@@ -131,7 +74,6 @@ function mockData() {
   };
 
   return {
-    people,
     orgIdsByKwuid,
     orgParents,
   };
@@ -149,5 +91,7 @@ function getOrganizationFromID(orgId: number, parentId: number | null): Organiza
 }
 
 function getRandomDelay() {
-  return Math.floor(Math.random() * 1000) + 2000;
+  return Math.floor(Math.random() * 1000) + 500;
 }
+
+export default new MockAPIService();

@@ -1,22 +1,8 @@
 import { Environments } from '../../config/environments';
 import { Organization } from '../../models/Organization';
-import { Person } from '../../models/Person';
 import { getRedis } from '../redis';
 
 export class APIRedis {
-  public async getPerson(kwuid: number): Promise<Person | null> {
-    try {
-      const result = await getRedis().get(`people:${kwuid}`);
-      return JSON.parse(result);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  public setPerson(person: Person): Promise<'OK'> {
-    return getRedis().set(`people:${person.kw_uid}`, JSON.stringify(person));
-  }
-
   public async getOrgIds(kwuid: number): Promise<number[]> {
     try {
       const result = await getRedis().get(`people:${kwuid}:orgIds`);
@@ -31,21 +17,19 @@ export class APIRedis {
   }
 
   public async getOrganzations(orgIds: number[]): Promise<Organization[]> {
-    try {
-      const redis = getRedis();
-      const orgs = await Promise.all(orgIds.map((orgId) => redis.get(`org:${orgId}`)));
-      return orgs.map((org) => JSON.parse(org));
-    } catch (e) {
-      return [];
-    }
+    const redis = getRedis();
+    const orgs = await Promise.all(orgIds.map((orgId) => redis.get(`org:${orgId}`)));
+    return orgs.map((org) => JSON.parse(org));
   }
 
-  public async setOrganization(org: Organization): Promise<'OK'> {
+  public async setOrganization(org: Organization): Promise<'OK' | 'Exists'> {
     const redis = getRedis();
-    if ((await redis.exists(`${org.id}`)) > 0) {
-      return 'OK';
+    const key = `org:${org.id}`;
+
+    if ((await redis.exists(key)) > 0) {
+      return 'Exists';
     }
 
-    return redis.set(`org:${org.id}`, JSON.stringify(org), 'EX', Environments.redisExpireTime);
+    return redis.set(key, JSON.stringify(org), 'EX', Environments.redisExpireTime);
   }
 }

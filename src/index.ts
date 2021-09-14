@@ -1,17 +1,5 @@
-import express from 'express';
 import { Environments } from './config/environments';
-import { PeopleController } from './controllers/people.controller';
-
-const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.use('/people', new PeopleController().getRoutes());
-
-app.use('/', (req, res) => {
-  res.send('API is running ...');
-});
+import app from './app';
 
 const port = Environments.serverPort;
 
