@@ -9,8 +9,8 @@ services:
       - 8080:8080
     entrypoint: sh -ce "./check_node_modules.sh && npm run dev:watch"
     environment:
-      REDIS_HOST: redis
-      PNO_SERVICE_URL: https://kong.command-api.kw.com/pno/api/v2
+      REDIS_URL: "${REDIS_URL}"
+      PNO_SERVICE_URL: "${PNO_SERVICE_URL}"
     volumes:
       - .:/project
     tty: true
