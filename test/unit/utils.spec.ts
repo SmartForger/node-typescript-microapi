@@ -5,6 +5,6 @@ describe('delay', () => {
     const ts = new Date().getTime();
     await delay(1000);
     const ts1 = new Date().getTime();
-    expect(ts1 - ts).toBeGreaterThan(1000);
+    expect(ts1 - ts).toBeGreaterThanOrEqual(1000);
   });
 });

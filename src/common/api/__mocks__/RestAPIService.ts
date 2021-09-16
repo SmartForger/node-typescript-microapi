@@ -35,7 +35,11 @@ class MockAPIService implements IRestAPIService {
     const { orgIdsByKwuid, orgParents } = mockData();
 
     if (!orgIdsByKwuid[kwuid]) {
-      throw new Error('not found');
+      throw {
+        response: {
+          status: 404,
+        },
+      };
     }
 
     const organizations = orgIdsByKwuid[kwuid].map((orgId) => getOrganizationFromID(orgId, orgParents[orgId]));

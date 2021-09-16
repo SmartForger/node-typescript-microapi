@@ -5,7 +5,7 @@ import { api } from '../common/api';
 export class PeopleController extends RestController {
   public async getOrganizations(req: Request, res: Response): Promise<void> {
     const kwuid = parseInt(req.params.kwuid, 10) || 0;
-    const token = req.headers?.authorization || '';
+    const token = req.headers.authorization || '';
 
     try {
       const organizations = await api.getOrganizationsForPerson(kwuid, token);
@@ -14,15 +14,13 @@ export class PeopleController extends RestController {
         data: organizations,
       });
     } catch (err) {
-      console.log(err);
-      // TODO: Better error handling
-      res.status(500).send('Server error');
+      this.handleError(err, res);
     }
   }
 
   public async getFreshOrganizations(req: Request, res: Response): Promise<void> {
     const kwuid = parseInt(req.params.kwuid, 10) || 0;
-    const token = req.headers?.authorization || '';
+    const token = req.headers.authorization || '';
 
     try {
       const organizations = await api.getOrganizationsForPerson(kwuid, token, true);
@@ -31,13 +29,11 @@ export class PeopleController extends RestController {
         data: organizations,
       });
     } catch (err) {
-      console.log(err);
-      // TODO: Better error handling
-      res.status(500).send('Server error');
+      this.handleError(err, res);
     }
   }
 
-  protected initRoutes() {
+  protected initRoutes(): void {
     this.routes.get('/:kwuid/orgs', this.getOrganizations.bind(this));
     this.routes.get('/:kwuid/orgs/reload', this.getFreshOrganizations.bind(this));
   }

@@ -1,5 +1,5 @@
+import { APIResponse } from '../../models/APIResponse';
 import { Organization } from '../../models/Organization';
-import { APIResponse } from './dto';
 
 export interface IRestAPIService {
   getOrganization(orgId: number, token: string): Promise<APIResponse<Organization>>;

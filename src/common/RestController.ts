@@ -16,5 +16,14 @@ export abstract class RestController {
     res.status(200).send(data);
   }
 
+  // eslint-disable-next-line
+  protected handleError(err: any, res: Response): void {
+    if (err.response?.status === 404) {
+      res.status(404).send('Not Found');
+    } else {
+      res.status(500).send('Server error');
+    }
+  }
+
   protected abstract initRoutes(): void;
 }
