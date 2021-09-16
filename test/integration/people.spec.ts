@@ -9,35 +9,47 @@ jest.mock('ioredis', () => require('ioredis-mock/jest'));
 jest.mock('../../src/common/api/RestAPIService');
 
 describe('People controller', () => {
-  it('returns all organizations', async () => {
-    const res = await request(app).get('/people/1/orgs').expect(200);
+  describe('getOrganizations', () => {
+    it('should return all organizations', async () => {
+      const res = await request(app).get('/people/1/orgs').expect(200);
 
-    const orgIds = res.body.data.map((org: Organization) => org.id);
-    orgIds.sort();
-    expect(orgIds.join(',')).toBe('1,2,3,4,5,7,8');
+      const orgIds = res.body.data.map((org: Organization) => org.id);
+      orgIds.sort();
+      expect(orgIds.join(',')).toBe('1,2,3,4,5,7,8');
+    });
+
+    it('should return cached organizations', async () => {
+      const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
+      await request(app).get('/people/1/orgs').expect(200);
+      expect(getOrganizationFn).not.toBeCalled();
+    });
+
+    it('should return 404 error for invalid members', async () => {
+      await request(app).get('/people/5/orgs').expect(404);
+    });
+
+    it('should return 401 error for invalid token', async () => {
+      await request(app).get('/people/5/orgs').expect(500);
+    });
   });
 
-  it('return cached organizations', async () => {
-    const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
-    await request(app).get('/people/1/orgs').expect(200);
-    expect(getOrganizationFn).not.toBeCalled();
-  });
+  describe('getFreshOrganizations', () => {
+    it('should return non-cahced organizations', async () => {
+      await request(app).get('/people/1/orgs').expect(200);
+      const orgIds = await getRedis().hget('orgIds', '1');
+      expect(orgIds).toBeTruthy();
 
-  it('return error response on api failure', async () => {
-    await request(app).get('/people/5/orgs').expect(500);
-  });
+      const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
+      await request(app).get('/people/1/orgs/reload').expect(200);
+      expect(getOrganizationFn).toBeCalled();
+    });
 
-  it('return non-cahced organizations', async () => {
-    await request(app).get('/people/1/orgs').expect(200);
-    const orgIds = await getRedis().get('people:1:orgIds');
-    expect(orgIds).toBeTruthy();
+    it('should return 404 error for invalid members', async () => {
+      await request(app).get('/people/5/orgs').expect(404);
+    });
 
-    const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
-    await request(app).get('/people/1/orgs/reload').expect(200);
-    expect(getOrganizationFn).toBeCalled();
-  });
-
-  it('return error on api failure when fetching non-cahced organizations', async () => {
-    await request(app).get('/people/5/orgs/reload').expect(500);
+    it('should return 401 error for invalid token', async () => {
+      await request(app).get('/people/5/orgs').expect(500);
+    });
   });
 });
