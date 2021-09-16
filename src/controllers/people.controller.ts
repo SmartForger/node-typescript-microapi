@@ -3,14 +3,6 @@ import { RestController } from '../common/RestController';
 import { api } from '../common/api';
 
 export class PeopleController extends RestController {
-  constructor() {
-    super();
-
-    // Configure routes here
-    this.routes.get('/:kwuid/orgs', this.getOrganizations.bind(this));
-    this.routes.get('/:kwuid/orgs/reload', this.getFreshOrganizations.bind(this));
-  }
-
   public async getOrganizations(req: Request, res: Response): Promise<void> {
     const kwuid = parseInt(req.params.kwuid, 10) || 0;
     const token = req.headers?.authorization || '';
@@ -43,5 +35,10 @@ export class PeopleController extends RestController {
       // TODO: Better error handling
       res.status(500).send('Server error');
     }
+  }
+
+  protected initRoutes() {
+    this.routes.get('/:kwuid/orgs', this.getOrganizations.bind(this));
+    this.routes.get('/:kwuid/orgs/reload', this.getFreshOrganizations.bind(this));
   }
 }
