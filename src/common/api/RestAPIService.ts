@@ -38,6 +38,19 @@ class RestAPIService implements IRestAPIService {
 
     return data;
   }
+
+  public async getOrganizationMemberCount(orgId: number, token: string): Promise<number> {
+    const { data } = await axios.get(`${Environments.pnoServiceUrl}/orgs/${orgId}/people`, {
+      headers: {
+        authorization: token,
+      },
+      params: {
+        limit: 1,
+      },
+    });
+
+    return data.meta.total;
+  }
 }
 
 export default new RestAPIService();

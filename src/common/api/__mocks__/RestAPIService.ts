@@ -48,6 +48,10 @@ class MockAPIService implements IRestAPIService {
       data: organizations,
     };
   }
+
+  public async getOrganizationMemberCount(): Promise<number> {
+    return 1;
+  }
 }
 
 function mockData() {

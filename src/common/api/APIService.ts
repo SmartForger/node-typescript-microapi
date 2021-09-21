@@ -28,7 +28,15 @@ export class APIService {
     );
 
     const allOrganizations = unionBy(organizations, orgAncestors, (org: Organization) => org.id);
-    await Promise.all(allOrganizations.map((org) => this.redis.setOrganization(org)));
+    await Promise.all(
+      allOrganizations.map((org) =>
+        (async () => {
+          const count = await restAPI.getOrganizationMemberCount(org.id, token);
+          org.member_count = count;
+          await this.redis.setOrganization(org);
+        })(),
+      ),
+    );
 
     await this.redis.setOrgIds(
       kwuid,
