@@ -32,9 +32,9 @@ vault:
 imagePullSecretsAuth: gcr-access-key
 
 container:
-  name: connect-groups-api
+  name: connect-org-lookup-orchestrator
   image:
-    repository: gcr.io/kw-image-repo/connect-groups-api
+    repository: gcr.io/kw-image-repo/connect-org-lookup-orchestrator
     pullPolicy: Always
   command:
   ports:
