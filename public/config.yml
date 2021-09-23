@@ -1,0 +1,33 @@
+services:
+  - routes:
+      - attributes:
+          methods:
+            - OPTIONS
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+          paths:
+            - /connect-org-looup-orchestrator
+    attributes:
+      url: http://$upstream_host/
+    plugins: []
+    name: connect-org-looup-orchestrator
+  - routes:
+      - attributes:
+          methods:
+            - OPTIONS
+            - GET
+          paths:
+            - /connect-org-looup-orchestrator/health
+    attributes:
+      url: http://$upstream_host/health
+    plugins: []
+    name: connect-org-looup-orchestrator.health
+plugins: []
+consumers:
+  - acls: []
+    credentials: []
+    custom_id: '0'
+    username: anonymous
