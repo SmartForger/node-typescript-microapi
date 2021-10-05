@@ -6,6 +6,11 @@ const loggingWinston = new LoggingWinston();
 
 const colorizer = format.colorize();
 
+const loggerTransports =
+  Environments.nodeEnv === 'prod' || Environments.nodeEnv === 'qa' || Environments.nodeEnv === 'dev'
+    ? [new transports.Console(), loggingWinston]
+    : [new transports.Console()];
+
 export default createLogger({
   level: Environments.logLevel,
   format: format.combine(
@@ -13,5 +18,5 @@ export default createLogger({
     format.json(),
     format.printf((msg: any) => colorizer.colorize(msg.level, `${msg.timestamp} - ${msg.level}: ${msg.message}`)),
   ),
-  transports: [new transports.Console(), loggingWinston],
+  transports: loggerTransports,
 });

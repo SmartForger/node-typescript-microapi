@@ -30,6 +30,18 @@ describe('People controller', () => {
       expect(getOrganizationFn).not.toBeCalled();
     });
 
+    it('should return 401 error for server errors', async () => {
+      api.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
+        throw {
+          response: {
+            status: 401,
+          }
+        };
+      });
+      await request(app).get('/people/1/orgs').expect(401);
+      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+    });
+
     it('should return 404 error for invalid members', async () => {
       await request(app).get('/people/5/orgs').expect(404);
     });
