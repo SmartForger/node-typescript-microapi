@@ -1,4 +1,5 @@
 import { Router, Response } from 'express';
+import logger from '../utils/logger';
 
 export abstract class RestController {
   protected routes: Router;
@@ -18,7 +19,11 @@ export abstract class RestController {
 
   // eslint-disable-next-line
   protected handleError(err: any, res: Response): void {
-    if (err.response?.status === 404) {
+    logger.error(err);
+
+    if (err.response?.status === 401) {
+      res.status(401).send('Unauthorized');
+    } else if (err.response?.status === 404) {
       res.status(404).send('Not Found');
     } else {
       res.status(500).send('Server error');

@@ -7,4 +7,5 @@ export class Environments {
   static readonly redisUrl = process.env.REDIS_URL || '127.0.0.1:6379';
   static readonly pnoServiceUrl = process.env.PNO_SERVICE_URL || '';
   static readonly redisExpireTime = parseInt(process.env.REDIS_EXPIRE_TIME) || 86400;
+  static readonly logLevel = process.env.LOG_LEVEL;
 }
