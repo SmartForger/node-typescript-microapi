@@ -8,5 +8,5 @@ export class Environments {
   static readonly pnoServiceUrl = process.env.PNO_SERVICE_URL || '';
   static readonly redisExpireTime = parseInt(process.env.REDIS_EXPIRE_TIME) || 86400;
   static readonly logLevel = process.env.LOG_LEVEL;
-  static readonly nodeEnv = process.env.NODE_ENV || 'development';
+  static readonly nodeEnv = process.env.NODE_ENV || 'local';
 }

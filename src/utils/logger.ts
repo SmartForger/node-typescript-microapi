@@ -2,7 +2,11 @@ import { createLogger, transports, format } from 'winston';
 import { LoggingWinston } from '@google-cloud/logging-winston';
 import { Environments } from '../config/environments';
 
-const loggingWinston = new LoggingWinston();
+const loggingWinston = new LoggingWinston({
+  labels: {
+    service: 'connect-org-lookup-orchestrator',
+  },
+});
 
 const colorizer = format.colorize();
 

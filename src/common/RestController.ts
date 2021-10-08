@@ -19,7 +19,17 @@ export abstract class RestController {
 
   // eslint-disable-next-line
   protected handleError(err: any, res: Response): void {
-    logger.error(err);
+    if (err.isAxiosError) {
+      logger.error(err.response.data, {
+        requestHeader: err.request._header,
+        responseHeaders: err.response.headers,
+        status: err.response.status,
+        statusText: err.response.statusText,
+        stack: err.stack,
+      });
+    } else {
+      logger.error(err);
+    }
 
     if (err.response?.status === 401) {
       res.status(401).send('Unauthorized');
