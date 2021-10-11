@@ -11,7 +11,7 @@ const loggingWinston = new LoggingWinston({
 const colorizer = format.colorize();
 
 const loggerTransports =
-  Environments.nodeEnv === 'prod' || Environments.nodeEnv === 'qa' || Environments.nodeEnv === 'dev'
+  Environments.nodeEnv === 'production' || Environments.nodeEnv === 'qa' || Environments.nodeEnv === 'development'
     ? [new transports.Console(), loggingWinston]
     : [new transports.Console()];
 

@@ -9,7 +9,6 @@ configMap:
   REDIS_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/prod#REDIS_URL
   PNO_SERVICE_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/prod#PNO_SERVICE_URL
   REDIS_EXPIRE_TIME: vault:secret/data/apps/command/connect-org-lookup-orchestrator/prod#REDIS_EXPIRE_TIME
-  NODE_ENV: prod
 
 customLabels: {}
 
