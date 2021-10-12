@@ -9,22 +9,22 @@ services:
             - PATCH
             - DELETE
           paths:
-            - /connect-org-looup-orchestrator
+            - /connect-org-lookup-orchestrator
     attributes:
       url: http://$upstream_host/
     plugins: []
-    name: connect-org-looup-orchestrator
+    name: connect-org-lookup-orchestrator
   - routes:
       - attributes:
           methods:
             - OPTIONS
             - GET
           paths:
-            - /connect-org-looup-orchestrator/health
+            - /connect-org-lookup-orchestrator/health
     attributes:
       url: http://$upstream_host/health
     plugins: []
-    name: connect-org-looup-orchestrator.health
+    name: connect-org-lookup-orchestrator.health
 plugins: []
 consumers:
   - acls: []
