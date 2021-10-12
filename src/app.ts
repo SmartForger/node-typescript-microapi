@@ -13,7 +13,7 @@ app.use('/people', new PeopleController().getRoutes());
 app.use('/health', new HealthController().getRoutes());
 
 app.use('/', (req, res) => {
-  res.send('API is running ...');
+  res.send('API is running...');
 });
 
 export default app;
