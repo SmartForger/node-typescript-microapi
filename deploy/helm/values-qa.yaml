@@ -9,7 +9,7 @@ configMap:
   REDIS_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/qa#REDIS_URL
   PNO_SERVICE_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/qa#PNO_SERVICE_URL
   REDIS_EXPIRE_TIME: vault:secret/data/apps/command/connect-org-lookup-orchestrator/qa#REDIS_EXPIRE_TIME
-
+  GOOGLE_APPLICATION_CREDENTIALS: "/app/.conn-org-lookup-orch.json"
 
 customLabels: {}
 
@@ -25,9 +25,9 @@ hpa:
 replicaCount: 3
 
 vault:
- addr: "https://vault.cloud.kw.com/"
- tls: "vault-tls"
- role: "read"
+  addr: "https://vault.cloud.kw.com/"
+  tls: "vault-tls"
+  role: "read"
 
 imagePullSecretsAuth: gcr-access-key
 
@@ -57,3 +57,13 @@ container:
     httpGet:
       path: /health
       port: 8080
+
+extraVolume:
+  - name: serviceaccount
+    secret:
+      secretName: conn-org-lookup-orch
+
+extraVolumeMounts:
+  - name: serviceaccount
+    mountPath: "/app/.conn-org-lookup-orch.json"
+    subPath: ".conn-org-lookup-orch.json"
