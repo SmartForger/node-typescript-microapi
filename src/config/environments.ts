@@ -9,4 +9,5 @@ export class Environments {
   static readonly redisExpireTime = parseInt(process.env.REDIS_EXPIRE_TIME) || 86400;
   static readonly logLevel = process.env.LOG_LEVEL;
   static readonly nodeEnv = process.env.NODE_ENV || 'local';
+  static readonly gcpProjectId = process.env.GCP_PROJECT_ID || '';
 }

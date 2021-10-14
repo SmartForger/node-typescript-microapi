@@ -3,6 +3,7 @@ import { LoggingWinston } from '@google-cloud/logging-winston';
 import { Environments } from '../config/environments';
 
 const loggingWinston = new LoggingWinston({
+  projectId: Environments.gcpProjectId,
   labels: {
     service: 'connect-org-lookup-orchestrator',
   },
