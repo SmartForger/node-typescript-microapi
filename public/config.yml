@@ -12,7 +12,43 @@ services:
             - /connect-org-lookup-orchestrator
     attributes:
       url: http://$upstream_host/
-    plugins: []
+    plugins:
+      - attributes:
+          config:
+            key_names: apikey
+            run_on_preflight: true
+            hide_credentials: false
+            anonymous: $callback_consumer_anonymous
+          enabled: true
+        name: key-auth
+      - attributes:
+          config:
+            key_claim_name: iss
+            run_on_preflight: true
+            secret_is_base64: false
+            uri_param_names:
+              - jwt
+            anonymous: $callback_consumer_anonymous
+          enabled: true
+        name: jwt
+      - attributes:
+          config:
+            client_id: $client_id
+            client_secret: $client_secret
+            discovery: $discovery_url
+            introspection_endpoint: $introspection_url
+            response_type: token
+            scope: openid email profile
+            ssl_verify: no
+            token_endpoint_auth_method: client_secret_basic
+          enabled: true
+        name: oidc
+      - attributes:
+          config:
+            uri_param_names:
+              - jwt
+          enabled: true
+        name: jwt-claim-headers
     name: connect-org-lookup-orchestrator
   - routes:
       - attributes:
