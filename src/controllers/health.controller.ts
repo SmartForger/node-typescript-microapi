@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Environments } from '../../config/environments';
-import { getRedis } from '../../common/redis';
-import { RestController } from '../../common/RestController';
+import { Environments } from '../config/environments';
+import { getRedis } from '../common/redis';
+import { RestController } from '../common/RestController';
 
 export class HealthController extends RestController {
   public async checkHealth(req: Request, res: Response): Promise<void> {
