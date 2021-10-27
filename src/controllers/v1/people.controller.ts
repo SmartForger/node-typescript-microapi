@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { RestController } from '../common/RestController';
-import { api } from '../common/api';
+import { RestController } from '../../common/RestController';
+import { api } from '../../common/api';
 
 export class PeopleController extends RestController {
   public async getOrganizations(req: Request, res: Response): Promise<void> {

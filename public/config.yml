@@ -9,7 +9,7 @@ services:
             - PATCH
             - DELETE
           paths:
-            - /connect-org-lookup-orchestrator
+            - /colo
     attributes:
       url: http://$upstream_host/
     plugins:
@@ -49,18 +49,18 @@ services:
               - jwt
           enabled: true
         name: jwt-claim-headers
-    name: connect-org-lookup-orchestrator
+    name: colo
   - routes:
       - attributes:
           methods:
             - OPTIONS
             - GET
           paths:
-            - /connect-org-lookup-orchestrator/health
+            - /colo/health
     attributes:
       url: http://$upstream_host/health
     plugins: []
-    name: connect-org-lookup-orchestrator.health
+    name: colo.health
 plugins: []
 consumers:
   - acls: []
