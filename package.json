@@ -12,6 +12,7 @@
     "dev:watch": "nodemon --watch src -e ts --exec yarn run dev:start",
     "start": "node dist",
     "test": "./node_modules/.bin/jest -w 2 --coverage",
+    "test:debug": "node --inspect-brk ./node_modules/.bin/jest -i",
     "test:ci": "npm run test --verbose --coverage --runInBand --ci",
     "release": "standard-version && git push --follow-tags origin master",
     "prepare": "husky install"

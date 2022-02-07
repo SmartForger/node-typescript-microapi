@@ -9,5 +9,5 @@ module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   coverageDirectory: '<rootDir>/coverage',
-  coveragePathIgnorePatterns: ['src/common/api/RestAPIService.ts', 'src/config/environments.ts'],
+  coveragePathIgnorePatterns: ['src/common/services/api.service.ts', 'src/config/environments.ts'],
 };

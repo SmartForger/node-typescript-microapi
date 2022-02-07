@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { RestController } from '../../common/RestController';
-import { api } from '../../common/api';
+import { orgsService } from '../../common/services';
 
 export class PeopleController extends RestController {
   public async getOrganizations(req: Request, res: Response): Promise<void> {
@@ -8,7 +8,7 @@ export class PeopleController extends RestController {
     const token = req.headers.authorization || '';
 
     try {
-      const organizations = await api.getOrganizationsForPerson(kwuid, token);
+      const organizations = await orgsService.getOrganizationsForPerson(kwuid, token);
 
       this.sendData(res, {
         data: organizations,
@@ -23,7 +23,7 @@ export class PeopleController extends RestController {
     const token = req.headers.authorization || '';
 
     try {
-      const organizations = await api.getOrganizationsForPerson(kwuid, token, true);
+      const organizations = await orgsService.getOrganizationsForPerson(kwuid, token, true);
 
       this.sendData(res, {
         data: organizations,

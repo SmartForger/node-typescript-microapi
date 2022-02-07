@@ -2,17 +2,17 @@ import request from 'supertest';
 
 import app from '../../../src/app';
 import { Organization } from '../../../src/models/Organization';
-import RestAPIService from '../../../src/common/api/RestAPIService';
-import { APIService } from '../../../src/common/api/APIService';
-import { api } from '../../../src/common/api';
+import apiService from '../../../src/common/services/api.service';
+import orgsService from '../../../src/common/services/organizations.service';
+import { IOrganizationsService } from '../../../src/common/types/services/IOrganizationsService';
 import { getRedis } from '../../../src/common/redis';
 
 jest.mock('ioredis', () => require('ioredis-mock/jest'));
-jest.mock('../../../src/common/api/RestAPIService');
+jest.mock('../../../src/common/services/api.service');
 
 describe('People controller', () => {
-  let orgApi: Partial<APIService> = {
-    getOrganizationsForPerson: api.getOrganizationsForPerson,
+  let orgApi: Partial<IOrganizationsService> = {
+    getOrganizationsForPerson: orgsService.getOrganizationsForPerson,
   };
 
   describe('getOrganizations', () => {
@@ -21,25 +21,25 @@ describe('People controller', () => {
 
       const orgIds = res.body.data.map((org: Organization) => org.id);
       orgIds.sort();
-      expect(orgIds.join(',')).toBe('1,2,3,4,5,7,8');
+      expect(orgIds).toEqual([1, 2, 3, 4, 5, 7, 8]);
     });
 
     it('should return cached organizations', async () => {
-      const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
+      const getOrganizationFn = jest.spyOn(apiService, 'getOrganizationsForPerson');
       await request(app).get('/api/v1/people/1/orgs').expect(200);
       expect(getOrganizationFn).not.toBeCalled();
     });
 
     it('should return 401 error for server errors', async () => {
-      api.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
+      orgsService.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
         throw {
           response: {
             status: 401,
-          }
+          },
         };
       });
       await request(app).get('/api/v1/people/1/orgs').expect(401);
-      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+      orgsService.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
     });
 
     it('should return 404 error for invalid members', async () => {
@@ -47,30 +47,30 @@ describe('People controller', () => {
     });
 
     it('should return 500 error for server errors', async () => {
-      api.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
+      orgsService.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
         throw new Error();
       });
       await request(app).get('/api/v1/people/1/orgs').expect(500);
-      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+      orgsService.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
     });
 
     it('should use default kwuid', async () => {
-      api.getOrganizationsForPerson = jest.fn();
+      orgsService.getOrganizationsForPerson = jest.fn();
 
       await request(app).get('/api/v1/people/aaa/orgs').expect(200);
-      expect(api.getOrganizationsForPerson).toBeCalledWith(0, '');
+      expect(orgsService.getOrganizationsForPerson).toBeCalledWith(0, '');
 
-      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+      orgsService.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
     });
   });
 
   describe('getFreshOrganizations', () => {
     it('should return non-cahced organizations', async () => {
       await request(app).get('/api/v1/people/1/orgs').expect(200);
-      const orgIds = await getRedis().hget('orgIds', '1');
-      expect(orgIds).toBeTruthy();
+      const orgIds = await getRedis().smembers('orgIds:kwuid:1');
+      expect(orgIds.length).toBeGreaterThan(0);
 
-      const getOrganizationFn = jest.spyOn(RestAPIService, 'getOrganizationsForPerson');
+      const getOrganizationFn = jest.spyOn(apiService, 'getOrganizationsForPerson');
       await request(app).get('/api/v1/people/1/orgs/reload').expect(200);
       expect(getOrganizationFn).toBeCalled();
     });
@@ -80,20 +80,20 @@ describe('People controller', () => {
     });
 
     it('should return 500 error for server errors', async () => {
-      api.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
+      orgsService.getOrganizationsForPerson = jest.fn().mockImplementationOnce(() => {
         throw new Error();
       });
       await request(app).get('/api/v1/people/1/orgs/reload').expect(500);
-      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+      orgsService.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
     });
 
     it('should use default kwuid', async () => {
-      api.getOrganizationsForPerson = jest.fn();
+      orgsService.getOrganizationsForPerson = jest.fn();
 
       await request(app).get('/api/v1/people/aaa/orgs/reload').expect(200);
-      expect(api.getOrganizationsForPerson).toBeCalledWith(0, '', true);
+      expect(orgsService.getOrganizationsForPerson).toBeCalledWith(0, '', true);
 
-      api.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
+      orgsService.getOrganizationsForPerson = orgApi.getOrganizationsForPerson;
     });
   });
 });

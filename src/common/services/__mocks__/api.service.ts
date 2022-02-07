@@ -1,9 +1,8 @@
 import { Organization } from '../../../models/Organization';
 import { delay } from '../../../utils';
-import { APIResponse } from '../../../common/api/dto';
-import { IRestAPIService } from '../../../common/api/IRestAPIService';
+import { APIResponse } from '../../types/dto/APIResponse';
 
-class MockAPIService implements IRestAPIService {
+class MockAPIService {
   public async getOrganizationAncestors(orgId: number): Promise<APIResponse<Organization[]>> {
     const { orgParents } = mockData();
 
@@ -95,6 +94,25 @@ function getOrganizationFromID(orgId: number, parentId: number | null): Organiza
     member_count: null,
     org_key: `${orgId}`,
     parent_org_id: parentId,
+    address_1: null,
+    address_2: null,
+    city: null,
+    country: null,
+    created_at: new Date().toISOString(),
+    dba_name: null,
+    deleted_at: null,
+    email: null,
+    end_dt: null,
+    fax: null,
+    legacy_expansion_team_id: null,
+    legacy_org_id: null,
+    legacy_team_id: null,
+    org_type: null,
+    phone: null,
+    postal_code: null,
+    start_dt: null,
+    state: null,
+    updated_at: null,
   };
 }
 

@@ -21,7 +21,7 @@ export default createLogger({
   format: format.combine(
     format.timestamp(),
     format.json(),
-    format.printf((msg: any) => colorizer.colorize(msg.level, `${msg.timestamp} - ${msg.level}: ${msg.message}`)),
+    format.printf((msg: any) => colorizer.colorize(msg.level, `${msg.timestamp} - ${msg.level}: ${msg.message}`)), // eslint-disable-line
   ),
   transports: loggerTransports,
 });
