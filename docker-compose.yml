@@ -7,9 +7,9 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 8080:8080
-    entrypoint: sh -ce "./check_node_modules.sh && npm run dev:watch"
+    entrypoint: sh -ce "./check_node_modules.sh && npm run start:dev"
     environment:
-      REDIS_URL: "${REDIS_URL}"
+      REDIS_URL: "redis://redis:6379"
       PNO_SERVICE_URL: "${PNO_SERVICE_URL}"
     volumes:
       - .:/project
