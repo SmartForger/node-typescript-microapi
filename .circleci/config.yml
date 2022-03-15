@@ -21,14 +21,6 @@ workflows:
             branches:
               only:
                 - main
-      - lint:
-          context: nonprod_push_and_deploy
-          requires:
-            - ci/build-push
-          filters:
-            branches:
-              ignore:
-                - main
       - unit_test:
           context: nonprod_push_and_deploy
           requires:
@@ -39,16 +31,6 @@ workflows:
                 - main
 
 jobs:
-  lint:
-    working_directory: /usr/src/app
-    executor:
-      name: ci/test
-      service: connect-org-lookup-orchestrator
-    steps:
-      - run:
-          name: Run Lint
-          command: |
-            yarn run lint
   unit_test:
     working_directory: /usr/src/app
     executor:
