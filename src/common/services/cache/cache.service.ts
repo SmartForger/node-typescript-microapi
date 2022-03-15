@@ -1,6 +1,7 @@
 import { Redis } from 'ioredis';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { HealthIndicatorResult } from '@nestjs/terminus';
 import { Organization } from '../../../common/types/Organization';
 import {
   createObject,
@@ -13,6 +14,15 @@ export class CacheService {
     private configService: ConfigService,
     @Inject('RedisClient') private client: Redis,
   ) {}
+
+  public async getStatus(): Promise<HealthIndicatorResult> {
+    try {
+      await this.client.ping();
+      return { cache: { status: 'up' } };
+    } catch {
+      return { cache: { status: 'down' } };
+    }
+  }
 
   public async getOrganizationsForUser(kwuid: number): Promise<Organization[]> {
     const orgIds = await this.client.smembers(`orgIds:kwuid:${kwuid}`);

@@ -96,4 +96,37 @@ describe('CacheService', () => {
       });
     });
   });
+
+  describe('getStatus', () => {
+    const pingMock = jest.fn();
+    let redisClient: { ping: jest.Mock };
+
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        imports: [ConfigModule],
+        providers: [
+          CacheService,
+          {
+            provide: 'RedisClient',
+            useValue: { ping: pingMock },
+          },
+        ],
+      }).compile();
+
+      service = module.get<CacheService>(CacheService);
+      redisClient = module.get<{ ping: jest.Mock }>('RedisClient');
+    });
+
+    it('should return up', async () => {
+      redisClient.ping.mockResolvedValueOnce('ping');
+      const result = await service.getStatus();
+      expect(result).toEqual({ cache: { status: 'up' } });
+    });
+
+    it('should return down', async () => {
+      redisClient.ping.mockRejectedValue('error');
+      const result = await service.getStatus();
+      expect(result).toEqual({ cache: { status: 'down' } });
+    });
+  });
 });

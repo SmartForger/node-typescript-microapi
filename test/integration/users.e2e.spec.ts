@@ -66,7 +66,7 @@ describe('UsersController (e2e)', () => {
     await app.init();
   });
 
-  describe('/api/v2/people/:kwuid/orgs (GET)', () => {
+  describe('/api/v1/people/:kwuid/orgs (GET)', () => {
     it('should return orgs from cache', async () => {
       await redis.sadd('orgIds:kwuid:1', [1, 2]);
       await redis.hset('org:1', 'id', 1);
@@ -99,7 +99,7 @@ describe('UsersController (e2e)', () => {
     });
   });
 
-  describe('/api/v2/people/:kwuid/orgs/reload (GET)', () => {
+  describe('/api/v1/people/:kwuid/orgs/reload (GET)', () => {
     it('should return orgs from PNO', async () => {
       await redis.sadd('orgIds:kwuid:1', [1, 2]);
       await redis.hset('org:1', 'id', 1);
