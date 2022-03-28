@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockApiService, mockCacheService } from '../../test/utils';
+import {
+  mockApiService,
+  mockAppConfigService,
+  mockCacheService,
+} from '../../test/utils';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -47,12 +51,13 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const { apiProvider, apiMock } = mockApiService();
     const { cacheProvider, cacheMock } = mockCacheService();
+    const { configProvider } = mockAppConfigService();
 
     cache = cacheMock;
     api = apiMock;
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [apiProvider, cacheProvider, UsersService],
+      providers: [apiProvider, cacheProvider, configProvider, UsersService],
     }).compile();
 
     service = module.get<UsersService>(UsersService);

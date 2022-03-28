@@ -1,23 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { chain } from 'lodash';
-import { OrgType } from '../common/types/OrgType';
 import { ApiService } from '../common/services/api/api.service';
+import { AppConfigService } from '../common/services/app-config/app-config.service';
 import { CacheService } from '../common/services/cache/cache.service';
 import { Organization } from '../common/types/Organization';
-
-const ALLOWED_ORG_TYPES = [
-  OrgType.KWRI,
-  OrgType.MarketCenter,
-  OrgType.Region,
-  OrgType.WorldwideRegion,
-  OrgType.WorldwideMarketCenter,
-];
 
 @Injectable()
 export class UsersService {
   constructor(
     private cacheService: CacheService,
     private apiService: ApiService,
+    private config: AppConfigService,
   ) {}
 
   public async getOrganizationsForUser(
@@ -48,7 +41,7 @@ export class UsersService {
         [],
       )
       .unionBy(organizations, 'id')
-      .filter((org) => ALLOWED_ORG_TYPES.includes(org.org_type_id))
+      .filter((org) => this.config.isAllowedOrgType(org.org_type_id))
       .value();
     await this.cacheService.saveOrganizations(kwuid, allOrganizations);
 

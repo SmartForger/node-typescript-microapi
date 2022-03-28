@@ -15,6 +15,7 @@ export class HealthController {
     try {
       return this.health.check([async () => this.cache.getStatus()]);
     } catch (error) {
+      /* istanbul ignore next */
       throw error;
     }
   }

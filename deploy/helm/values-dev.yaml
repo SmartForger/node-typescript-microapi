@@ -9,6 +9,7 @@ configMap:
   REDIS_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#REDIS_URL
   PNO_SERVICE_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#PNO_SERVICE_URL
   REDIS_EXPIRE_TIME: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#REDIS_EXPIRE_TIME
+  ALLOWED_ORG_TYPES: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#ALLOWED_ORG_TYPES
   GOOGLE_APPLICATION_CREDENTIALS: "/app/.conn-org-lookup-orch.json"
   GCP_PROJECT_ID: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#GCP_PROJECT_ID
 

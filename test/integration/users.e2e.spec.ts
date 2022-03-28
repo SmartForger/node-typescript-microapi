@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { convertOrgs, mockApiService, mockRedisClient } from '../utils';
+import {
+  convertOrgs,
+  mockApiService,
+  mockRedisClient,
+  mockAppConfigService,
+} from '../utils';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication;
@@ -46,6 +51,7 @@ describe('UsersController (e2e)', () => {
   beforeEach(async () => {
     const { apiProvider, apiMock } = mockApiService();
     const { redisClientProvider } = mockRedisClient();
+    const { configProvider } = mockAppConfigService();
 
     api = apiMock;
 
@@ -56,6 +62,8 @@ describe('UsersController (e2e)', () => {
       .useValue(apiProvider.useValue)
       .overrideProvider(redisClientProvider.provide)
       .useFactory({ factory: redisClientProvider.useFactory })
+      .overrideProvider(configProvider.provide)
+      .useValue(configProvider.useValue)
       .compile();
 
     app = moduleFixture.createNestApplication();

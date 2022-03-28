@@ -2,6 +2,7 @@ import IORedis from 'ioredis';
 import { HttpModule } from '@nestjs/axios';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppConfigService } from './services/app-config/app-config.service';
 import { ApiService } from './services/api/api.service';
 import { CacheService } from './services/cache/cache.service';
 
@@ -22,6 +23,7 @@ const createRedisInstance = (configService: ConfigService) => {
     }),
   ],
   providers: [
+    AppConfigService,
     ApiService,
     CacheService,
     {
@@ -30,6 +32,6 @@ const createRedisInstance = (configService: ConfigService) => {
       inject: [ConfigService],
     },
   ],
-  exports: [ApiService, CacheService],
+  exports: [AppConfigService, ApiService, CacheService],
 })
 export class CommonModule {}

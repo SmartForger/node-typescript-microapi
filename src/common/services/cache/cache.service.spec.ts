@@ -1,6 +1,10 @@
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { convertOrgs, mockRedisClient } from '../../../../test/utils';
+import {
+  convertOrgs,
+  mockAppConfigService,
+  mockRedisClient,
+} from '../../../../test/utils';
 import { CacheService } from './cache.service';
 
 describe('CacheService', () => {
@@ -29,9 +33,10 @@ describe('CacheService', () => {
 
   beforeEach(async () => {
     const { redisClientProvider } = mockRedisClient();
+    const { configProvider } = mockAppConfigService();
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule],
-      providers: [CacheService, redisClientProvider],
+      providers: [redisClientProvider, configProvider, CacheService],
     }).compile();
 
     service = module.get<CacheService>(CacheService);
@@ -102,6 +107,7 @@ describe('CacheService', () => {
     let redisClient: { ping: jest.Mock };
 
     beforeEach(async () => {
+      const { configProvider } = mockAppConfigService();
       const module: TestingModule = await Test.createTestingModule({
         imports: [ConfigModule],
         providers: [
@@ -110,6 +116,7 @@ describe('CacheService', () => {
             provide: 'RedisClient',
             useValue: { ping: pingMock },
           },
+          configProvider,
         ],
       }).compile();
 

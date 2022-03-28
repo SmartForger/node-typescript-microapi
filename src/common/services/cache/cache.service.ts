@@ -1,17 +1,17 @@
 import { Redis } from 'ioredis';
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { HealthIndicatorResult } from '@nestjs/terminus';
 import { Organization } from '../../../common/types/Organization';
 import {
   createObject,
   flattenObjectToPairs,
 } from '../../../common/utils/object';
+import { AppConfigService } from '../app-config/app-config.service';
 
 @Injectable()
 export class CacheService {
   constructor(
-    private configService: ConfigService,
+    private configService: AppConfigService,
     @Inject('RedisClient') private client: Redis,
   ) {}
 
@@ -38,8 +38,7 @@ export class CacheService {
   }
 
   public async saveOrganizations(kwuid: number, orgs: Organization[]) {
-    const redisExpireTime =
-      this.configService.get('REDIS_EXPIRE_TIME') || 86400;
+    const redisExpireTime = this.configService.getRedisExpiration();
 
     const orgIds = orgs.map((org) => org.id.toString());
     const orgIdsKey = `orgIds:kwuid:${kwuid}`;
@@ -56,6 +55,16 @@ export class CacheService {
     });
 
     const pipeline = this.client.pipeline(redisCommands);
+    await pipeline.exec();
+  }
+
+  public async saveOrganization(org: Organization) {
+    const redisExpireTime = this.configService.getRedisExpiration();
+    const key = `org:${org.id}`;
+    const pipeline = this.client.pipeline([
+      ...this.saveObjectCommands(org, key),
+      ['expire', key, redisExpireTime],
+    ]);
     await pipeline.exec();
   }
 

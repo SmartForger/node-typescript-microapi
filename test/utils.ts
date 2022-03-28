@@ -1,8 +1,26 @@
 import * as Redis from 'ioredis-mock';
+import { OrgType } from 'src/common/types/OrgType';
 
 import { ApiService } from '../src/common/services/api/api.service';
+import { AppConfigService } from '../src/common/services/app-config/app-config.service';
 import { CacheService } from '../src/common/services/cache/cache.service';
 import { UsersService } from '../src/users/users.service';
+import { OrgsService } from '../src/orgs/orgs.service';
+
+export const mockAppConfigService = () => {
+  const configMock = {
+    isAllowedOrgType: (orgType: OrgType) => [1, 2, 3, 5, 6].includes(orgType),
+    getRedisExpiration: () => '86400',
+  };
+
+  return {
+    configProvider: {
+      provide: AppConfigService,
+      useValue: configMock,
+    },
+    configMock,
+  };
+};
 
 export const mockApiService = () => {
   const apiMock = {
@@ -25,6 +43,7 @@ export const mockCacheService = () => {
   const cacheMock = {
     getOrganizationsForUser: jest.fn(),
     saveOrganizations: jest.fn(),
+    saveOrganization: jest.fn(),
   };
 
   return {
@@ -47,6 +66,20 @@ export const mockUserService = () => {
       useValue: userServiceMock,
     },
     userServiceMock,
+  };
+};
+
+export const mockOrgsService = () => {
+  const orgsServiceMock = {
+    updateOrganizationCache: jest.fn(),
+  };
+
+  return {
+    orgsServiceProvider: {
+      provide: OrgsService,
+      useValue: orgsServiceMock,
+    },
+    orgsServiceMock,
   };
 };
 

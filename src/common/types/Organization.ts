@@ -1,3 +1,5 @@
+import { OrgType } from './OrgType';
+
 export interface Organization {
   id: number;
   name: string | null;
@@ -24,7 +26,7 @@ export interface Organization {
   legacy_team_id: number | null;
   legacy_expansion_team_id: number | null;
   org_type: {
-    id: number;
+    id: OrgType;
     name: string | null;
   };
 }
