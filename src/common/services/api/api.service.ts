@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { pick } from 'lodash';
+import { pick, pickBy } from 'lodash';
 import { APIResponse } from 'src/common/types/APIResponse';
 import { Organization } from 'src/common/types/Organization';
 
@@ -48,7 +48,8 @@ export class ApiService {
         )
         .subscribe({
           next: (response) => {
-            resolve(response.data.data);
+            const data = this.sanitizeOrg(response.data.data);
+            resolve(data);
           },
           error: reject,
         });
@@ -67,7 +68,10 @@ export class ApiService {
         )
         .subscribe({
           next: (response) => {
-            resolve(response.data.data);
+            const data = response.data.data.map((org: unknown) =>
+              this.sanitizeOrg(org),
+            );
+            resolve(data);
           },
           error: () => {
             resolve([]);
@@ -88,8 +92,8 @@ export class ApiService {
         )
         .subscribe({
           next: (response) => {
-            const data = response.data.data.map(
-              (org: unknown) => pick(org, orgFields) as Organization,
+            const data = response.data.data.map((org: unknown) =>
+              this.sanitizeOrg(org),
             );
             resolve(data);
           },
@@ -127,5 +131,13 @@ export class ApiService {
         authorization: token,
       },
     };
+  }
+
+  private sanitizeOrg(data: any) {
+    const org = pickBy(
+      data,
+      (val, key) => orgFields.includes(key) && val !== null,
+    );
+    return org as Organization;
   }
 }
