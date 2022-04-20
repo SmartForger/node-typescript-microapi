@@ -44,7 +44,7 @@ describe('OrgsService', () => {
       });
 
       expect(() =>
-        service.updateOrganizationCache(1, 'token'),
+        service.updateOrganizationCache(1, { token: 'Token', apikey: '' }),
       ).rejects.toThrowError('Invalid org type');
     });
 
@@ -57,7 +57,7 @@ describe('OrgsService', () => {
       };
       api.getOrganization.mockResolvedValueOnce(org);
 
-      await service.updateOrganizationCache(1, 'token');
+      await service.updateOrganizationCache(1, { token: 'Token', apikey: '' });
 
       expect(cache.saveOrganization).toBeCalledWith(org);
     });

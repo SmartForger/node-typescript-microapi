@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AuthInfo } from '../common/types/AuthInfo';
 import { ApiService } from '../common/services/api/api.service';
 import { AppConfigService } from '../common/services/app-config/app-config.service';
 import { CacheService } from '../common/services/cache/cache.service';
@@ -13,9 +14,9 @@ export class OrgsService {
 
   public async updateOrganizationCache(
     orgId: number,
-    token: string,
+    auth: AuthInfo,
   ): Promise<void> {
-    const org = await this.apiService.getOrganization(orgId, token);
+    const org = await this.apiService.getOrganization(orgId, auth);
 
     if (!this.configService.isAllowedOrgType(org.org_type.id)) {
       throw new Error('Invalid org type');

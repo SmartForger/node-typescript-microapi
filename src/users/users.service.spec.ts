@@ -71,7 +71,10 @@ describe('UsersService', () => {
     it('should return cached organizations', async () => {
       cache.getOrganizationsForUser.mockResolvedValueOnce(orgs);
 
-      const result = await service.getOrganizationsForUser(1, 'Token');
+      const result = await service.getOrganizationsForUser(1, {
+        token: 'Token',
+        apikey: '',
+      });
 
       expect(cache.getOrganizationsForUser).toBeCalledWith(1);
       expect(result).toEqual(orgs);
@@ -80,15 +83,21 @@ describe('UsersService', () => {
     it('should fetch orgs from PNO if organizations are not cached', async () => {
       api.getOrganizationsForPerson.mockResolvedValueOnce([]);
       cache.getOrganizationsForUser.mockResolvedValueOnce([]);
-      await service.getOrganizationsForUser(1, 'Token');
-      expect(api.getOrganizationsForPerson).toBeCalledWith(1, 'Token');
+      await service.getOrganizationsForUser(1, { token: 'Token', apikey: '' });
+      expect(api.getOrganizationsForPerson).toBeCalledWith(1, {
+        token: 'Token',
+        apikey: '',
+      });
     });
 
     it('should save orgs in cache if organizations are not cached', async () => {
       api.getOrganizationsForPerson.mockResolvedValueOnce(orgs.slice(0, 1));
       api.getOrganizationAncestors.mockResolvedValueOnce(ancestors);
       cache.getOrganizationsForUser.mockResolvedValueOnce([]);
-      const result = await service.getOrganizationsForUser(1, 'Token');
+      const result = await service.getOrganizationsForUser(1, {
+        token: 'Token',
+        apikey: '',
+      });
 
       expect(result).toEqual([...ancestors, orgs[0]]);
       expect(cache.saveOrganizations).toBeCalledWith(1, result);

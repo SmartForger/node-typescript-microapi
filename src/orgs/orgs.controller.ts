@@ -1,11 +1,6 @@
-import {
-  Controller,
-  HttpCode,
-  Param,
-  Post,
-  Req,
-  Request,
-} from '@nestjs/common';
+import { Controller, HttpCode, Param, Post } from '@nestjs/common';
+import { AuthInfo } from '../common/types/AuthInfo';
+import { Auth } from '../common/decorators/auth.decorator';
 import { OrgsService } from './orgs.service';
 
 @Controller('api/v1/orgs')
@@ -14,8 +9,10 @@ export class OrgsController {
 
   @Post(':orgId/refresh')
   @HttpCode(204)
-  updateOrganizationCache(@Param('orgId') orgId: number, @Req() req: Request) {
-    const token = req.headers['authorization'] || '';
-    return this.service.updateOrganizationCache(orgId, token);
+  updateOrganizationCache(
+    @Param('orgId') orgId: number,
+    @Auth() auth: AuthInfo,
+  ) {
+    return this.service.updateOrganizationCache(orgId, auth);
   }
 }

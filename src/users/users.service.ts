@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { chain } from 'lodash';
+import { AuthInfo } from '../common/types/AuthInfo';
 import { ApiService } from '../common/services/api/api.service';
 import { AppConfigService } from '../common/services/app-config/app-config.service';
 import { CacheService } from '../common/services/cache/cache.service';
@@ -15,7 +16,7 @@ export class UsersService {
 
   public async getOrganizationsForUser(
     kwuid: number,
-    token: string,
+    auth: AuthInfo,
     force?: boolean,
   ): Promise<Organization[]> {
     if (!force) {
@@ -28,11 +29,11 @@ export class UsersService {
 
     const organizations = await this.apiService.getOrganizationsForPerson(
       kwuid,
-      token,
+      auth,
     );
     const responses = await Promise.all(
       organizations.map((org) =>
-        this.apiService.getOrganizationAncestors(org.id, token),
+        this.apiService.getOrganizationAncestors(org.id, auth),
       ),
     );
     const allOrganizations = chain(responses)

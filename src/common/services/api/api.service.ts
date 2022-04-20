@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { pick, pickBy } from 'lodash';
+import { pickBy } from 'lodash';
 import { APIResponse } from 'src/common/types/APIResponse';
+import { AuthInfo } from 'src/common/types/AuthInfo';
 import { Organization } from 'src/common/types/Organization';
 
 const orgFields = [
@@ -38,14 +39,11 @@ export class ApiService {
 
   public async getOrganization(
     orgId: number,
-    token: string,
+    auth: AuthInfo,
   ): Promise<Organization> {
     return new Promise((resolve, reject) => {
       this.httpService
-        .get<APIResponse<Organization>>(
-          `/orgs/${orgId}`,
-          this.getOptions(token),
-        )
+        .get<APIResponse<Organization>>(`/orgs/${orgId}`, this.getOptions(auth))
         .subscribe({
           next: (response) => {
             const data = this.sanitizeOrg(response.data.data);
@@ -58,13 +56,13 @@ export class ApiService {
 
   public async getOrganizationAncestors(
     orgId: number,
-    token: string,
+    auth: AuthInfo,
   ): Promise<Organization[]> {
     return new Promise((resolve) => {
       this.httpService
         .get<APIResponse<Organization[]>>(
           `/orgs/${orgId}/ancestors`,
-          this.getOptions(token),
+          this.getOptions(auth),
         )
         .subscribe({
           next: (response) => {
@@ -82,13 +80,13 @@ export class ApiService {
 
   public async getOrganizationsForPerson(
     kwuid: number,
-    token: string,
+    auth: AuthInfo,
   ): Promise<Organization[]> {
     return new Promise((resolve) => {
       this.httpService
         .get<APIResponse<Organization[]>>(
           `/people/${kwuid}/orgs`,
-          this.getOptions(token),
+          this.getOptions(auth),
         )
         .subscribe({
           next: (response) => {
@@ -106,12 +104,12 @@ export class ApiService {
 
   public async getOrganizationMemberCount(
     orgId: number,
-    token: string,
+    auth: AuthInfo,
   ): Promise<number> {
     return new Promise((resolve, reject) => {
       this.httpService
         .get<{ meta: { total: number } }>(`/orgs/${orgId}/people`, {
-          ...this.getOptions(token),
+          ...this.getOptions(auth),
           params: {
             limit: 1,
           },
@@ -125,12 +123,18 @@ export class ApiService {
     });
   }
 
-  private getOptions(token: string) {
-    return {
-      headers: {
-        authorization: token,
-      },
-    };
+  private getOptions(auth: AuthInfo) {
+    return auth.token
+      ? {
+          headers: {
+            authorization: auth.token,
+          },
+        }
+      : {
+          headers: {
+            apikey: auth.apikey,
+          },
+        };
   }
 
   private sanitizeOrg(data: any) {
