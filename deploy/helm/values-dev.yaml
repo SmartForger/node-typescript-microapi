@@ -10,8 +10,16 @@ configMap:
   PNO_SERVICE_URL: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#PNO_SERVICE_URL
   REDIS_EXPIRE_TIME: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#REDIS_EXPIRE_TIME
   ALLOWED_ORG_TYPES: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#ALLOWED_ORG_TYPES
+  SENTRY_DNS: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#SENTRY_DNS
   GOOGLE_APPLICATION_CREDENTIALS: "/app/.conn-org-lookup-orch.json"
   GCP_PROJECT_ID: vault:secret/data/apps/command/connect-org-lookup-orchestrator/dev#GCP_PROJECT_ID
+
+additionalLabels:
+  product: communities
+  business_unit: connect
+  tags.datadoghq.com/env: dev
+  tags.datadoghq.com/version: ${trigger['artifacts'].?[type == 'docker/image' && version != null][0]['version']}
+  tags.datadoghq.com/service: org-lookup-orchestrator
 
 customLabels: {}
 
@@ -59,6 +67,39 @@ container:
     httpGet:
       path: /health
       port: 8080
+  env:
+    - name: DD_AGENT_HOST
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    - name: DD_ENV
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.labels['tags.datadoghq.com/env']
+    - name: DD_SERVICE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.labels['tags.datadoghq.com/service']
+    - name: DD_PRODUCT
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.labels['product']
+    - name: DD_VERSION
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.labels['tags.datadoghq.com/version']
+    - name: DD_LOGS_INJECTION
+      value: "true"
+    - name: DD_TAGS
+      value: "product:$(DD_PRODUCT),business_unit:connect"
+    - name: DD_SERVICE_MAPPING
+      value: "http:$(DD_SERVICE),http2:$(DD_SERVICE),fs:$(DD_SERVICE),dns:$(DD_SERVICE),google-cloud-pubsub:$(DD_SERVICE),grpc:$(DD_SERVICE)"
+    - name: DD_RUNTIME_METRICS_ENABLED
+      value: "true"
+    - name: DD_PROFILING_ENABLED
+      value: "true"
+    - name: DD_APM_IGNORE_RESOURCES
+      value: "/health,/ping,/db/health"
 
 extraVolume:
   - name: serviceaccount
