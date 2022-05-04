@@ -29,7 +29,7 @@ import { getTransports } from './common/utils/logger';
     SentryModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        dsn: configService.get<string>('SENTRY_DSN_KEY'),
+        dsn: configService.get<string>('SENTRY_DSN'),
         debug: true,
         environment: configService.get<string>('NODE_ENV'),
         tracesSampleRate: 1.0,

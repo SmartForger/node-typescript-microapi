@@ -11,7 +11,7 @@ services:
     environment:
       REDIS_URL: "redis://redis:6379"
       PNO_SERVICE_URL: "${PNO_SERVICE_URL}"
-      SENTRY_DNS: ${SENTRY_DNS}
+      SENTRY_DSN: ${SENTRY_DSN}
     volumes:
       - .:/project
     depends_on:
