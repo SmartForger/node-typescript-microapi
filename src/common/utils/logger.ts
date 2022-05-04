@@ -15,7 +15,9 @@ export function getTransports(configService: ConfigService) {
       ),
     }),
   ];
-  if (configService.get<string>('NODE_ENV') !== 'dev') {
+
+  const nodeEnv = configService.get<string>('NODE_ENV');
+  if (nodeEnv !== 'dev' && nodeEnv !== 'test') {
     transports.push(
       new LoggingWinston({
         prefix: 'org-lookup-orchestrator',

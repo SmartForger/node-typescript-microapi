@@ -28,19 +28,27 @@ import { getTransports } from './common/utils/logger';
     }),
     SentryModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        dsn: configService.get<string>('SENTRY_DSN'),
-        debug: true,
-        environment: configService.get<string>('NODE_ENV'),
-        tracesSampleRate: 1.0,
-        attachStacktrace: true,
-        release: configService.get<string>('npm_package_version'),
-        integrations: [
-          new RewriteFrames({
-            root: process.cwd(),
-          }),
-        ],
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const env = configService.get<string>('NODE_ENV');
+
+        if (env === 'test') {
+          return {};
+        }
+
+        return {
+          dsn: configService.get<string>('SENTRY_DSN'),
+          debug: true,
+          environment: env,
+          tracesSampleRate: 1.0,
+          attachStacktrace: true,
+          release: configService.get<string>('npm_package_version'),
+          integrations: [
+            new RewriteFrames({
+              root: process.cwd(),
+            }),
+          ],
+        };
+      },
       inject: [ConfigService],
     }),
     CommonModule,
