@@ -10,7 +10,9 @@
     "src/**/*.ts",
     "test/**/*.ts",
     "!src/main.ts",
-    "!src/common/services/api/api.service.ts"
+    "!src/common/services/api/api.service.ts",
+    "!src/datadog/client.ts",
+    "!src/common/utils/timer.ts"
   ],
   "coverageDirectory": "./coverage"
 }
