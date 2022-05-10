@@ -41,7 +41,6 @@ jobs:
           name: Run Unit Tests
           command: |
             yarn run test:ci
-          no_output_timeout: 10m
       - store_test_results:
           path: coverage
       - store_artifacts:
